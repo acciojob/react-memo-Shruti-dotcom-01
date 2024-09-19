@@ -1,59 +1,73 @@
 // App.js
-import React, { useState, useEffect } from 'react';
-import UseMemo from './UseMemo';
-import ReactMemo from './ReactMemo';
+import React, { useState } from 'react'
 
-function App() {
-  const [tasks, setTasks] = useState([]);
-  const [counter, setCounter] = useState(0);
-  const [customTask, setCustomTask] = useState('');
+const App = () => {
+  const[first, setFirst] = useState([]);
+  const[count, setCount] = useState(0);
+  const[text, setText] = useState("");
+  const[todos, setTodos] = useState([]);
 
-  useEffect(() => {
-    console.log('App mounted');
-  }, []);
+  const memoizedTodoCount = useMemo(() => first.length, [first]);
 
-  const handleAddTodo = () => {
-    setTasks([...tasks, 'New todo']);
+  const addNewTodo = () => {
+    setFirst([...first,"NewTodo"]);
   };
 
-  const handleIncrement = () => {
-    setCounter(counter + 1);
+  const incrementCounter = () => {
+    setCount(count + 1);
   };
 
-  const handleCustomTaskChange = (e) => {
-    setCustomTask(e.target.value);
-  };
-
-  const handleCustomTaskSubmit = () => {
-    if (customTask.length > 5) {
-      setTasks([...tasks, customTask]);
-      setCustomTask('');
+  const addSkill = () => {
+    if(text.length > 5) {
+      setTodos([...todos,text]);
+      setText("");
     }
   };
 
   return (
-    <div>
-      <h1>Task Manager</h1>
-      <button onClick={handleAddTodo}>Add todo</button>
-      <button onClick={handleIncrement}>Increment counter</button>
-      <p>Counter: {counter}</p>
-      <input
-        type="text"
-        value={customTask}
-        onChange={handleCustomTaskChange}
-        placeholder="Enter custom task"
-      />
-      <button onClick={handleCustomTaskSubmit}>Submit custom task</button>
-      <ul>
-        {tasks.map((task, index) => (
-          <li key={index}>{task}</li>
-        ))}
-      </ul>
-      <UseMemo />
-      <ReactMemo />
+    <div id='main'>
+        <h1>My Todos</h1>
+        <ul>
+            {first.map((item, index) => (
+                <li key={index} id={`todo-${index}`}>{item}</li>
+            ))}
+        </ul>
+        <button id='add-todo-btn' onClick={addNewTodo}>Add Todo</button>
+
+        <hr />
+
+        <div id='counter'>
+            {count}
+            <button id='incr-cnt' onClick={incrementCounter}>+</button>
+        </div>
+
+        <hr />
+
+        <h1>React.memo</h1>
+        <input id='skill-input' type='text' value={text} onChange={(e) => setText(e.target.value)} />
+        <button id='skill-btn' onClick={addSkill}>Add Skill</button>
+
+        <ul>
+            {todos.map((item, index) => (
+                <li key={index} id={`skill-${index}`}>{item}</li>
+            ))}
+        </ul>
+
+        <hr />
+
+        <UseMemoComponent count={memoizedTodoCount} />
+        <ReactMemoComponent text={text} />
     </div>
-  );
-}
+);
+};
 
 export default App;
 
+const UseMemoComponent = ({ count }) => {
+return (
+    <div>
+        <h2>UseMemo Component</h2>
+        <p>Total todos: {count}</p>
+    </div>
+);
+}
